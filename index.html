@@ -40,18 +40,6 @@
             color: white;
             border-color: #f59e0b; /* amber-500 */
         }
-        .btn-day-completed, .btn-week-completed {
-            background-color: #dcfce7; /* green-100 */
-            color: #166534; /* green-800 */
-            border: 1px solid #22c55e !important; /* green-500 */
-        }
-        .check-icon {
-             display: inline-block;
-             width: 1em;
-             height: 1em;
-             margin-left: 0.5em;
-             vertical-align: -0.125em;
-        }
         .chart-container {
             position: relative;
             width: 100%;
@@ -94,15 +82,9 @@
                             Ce programme est conçu pour augmenter votre force maximale sur les 5 mouvements fondamentaux. La clé de notre approche est l'utilisation d'un <strong class="font-semibold text-slate-700">"Training Max" (TM)</strong>. Au lieu de travailler avec vos vrais records (1RM), nous basons tous les pourcentages sur 90% de ces records. Cette méthode permet une progression plus constante, une meilleure gestion de la fatigue et réduit le risque de "griller" le système nerveux. Calculez vos TM ci-dessous pour personnaliser entièrement le programme.
                         </p>
                     </div>
-                     <div class="bg-white p-6 rounded-lg shadow-sm">
-                        <h3 class="text-2xl font-bold text-slate-800 mb-4">Comprendre le RIR (Reps In Reserve)</h3>
-                        <p class="text-slate-600 leading-relaxed">
-                            Dans les instructions pour certains exercices d'assistance, vous trouverez la notation <strong class="font-semibold text-slate-700">"RIR 2"</strong>. Cela signifie "Répétitions en Réserve". Un RIR de 2 vous demande de choisir une charge avec laquelle vous terminez votre série en ayant le sentiment que vous auriez pu faire <strong class="font-semibold text-slate-700">encore 2 répétitions</strong> de plus avant d'atteindre l'échec musculaire, mais pas trois. C'est une méthode efficace pour auto-réguler l'intensité, permettant de stimuler les muscles sans générer une fatigue excessive qui pourrait nuire à la récupération et aux mouvements principaux.
-                        </p>
-                    </div>
                     <div class="bg-white p-6 rounded-lg shadow-sm">
-                        <h3 class="text-2xl font-bold text-slate-800 mb-4">1. Calculez vos Charges d'Entraînement</h3>
-                        <p class="text-slate-500 mb-6">Entrez vos records personnels (1RM) actuels. Le TM (90% du 1RM) et toutes les charges du programme seront calculés automatiquement.</p>
+                        <h3 class="text-2xl font-bold text-slate-800 mb-4">1. Calculez votre Training Max (TM)</h3>
+                        <p class="text-slate-500 mb-6">Entrez vos records personnels (1RM) actuels. Le TM (90% du 1RM) sera calculé automatiquement.</p>
                         <div id="tm-calculator" class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div class="space-y-4">
                                 <div>
@@ -137,7 +119,6 @@
                                 </ul>
                             </div>
                         </div>
-                        <p class="text-center text-xs text-slate-500 mt-4 italic">Note : Toute modification de vos 1RM mettra à jour automatiquement l'ensemble des charges calculées dans l'onglet "Programme".</p>
                     </div>
                 </div>
 
@@ -198,95 +179,74 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const TMs = {};
-            const programData = [
-                 { week: 1, day: 1, phase: 'Accumulation', mainMove: 'Back Squat', content: [ { type: 'Mouvement Principal', ex: 'Back Squat', sets: '5x5', pct: 65, instruction: null }, { type: 'Assistance', ex: 'Good Morning', sets: '4x8', pct: null, instruction: "Léger. Focus technique, dos droit." }, { type: 'Assistance', ex: 'Fentes Bulgares', sets: '3x10/jambe', pct: null, instruction: "Difficile mais propre (RIR 2)." }, { type: 'Accessoire', ex: 'GHD Sit-ups', sets: '3x15', pct: null, instruction: "Poids de corps." }, { type: 'Accessoire', ex: 'Mollets debout', sets: '3x20', pct: null, instruction: "Modéré, contraction max." }, ] },
-                 { week: 1, day: 2, phase: 'Accumulation', mainMove: 'Bench Press', content: [ { type: 'Mouvement Principal', ex: 'Bench Press', sets: '5x5', pct: 65, instruction: null }, { type: 'Assistance', ex: 'Push Press', sets: '4x6', pct: null, instruction: "Charge explosive, plus lourde que SP." }, { type: 'Assistance', ex: 'DB Incline Press', sets: '3x10', pct: null, instruction: "Modéré, contrôle total (RIR 2)." }, { type: 'Accessoire', ex: 'Tirage Horizontal (Row)', sets: '4x12', pct: null, instruction: "Focus sur la contraction des dorsaux." }, { type: 'Accessoire', ex: 'Extensions Triceps', sets: '3x15', pct: null, instruction: "Léger, brûlure musculaire." }, ] },
-                 { week: 1, day: 3, phase: 'Accumulation', mainMove: 'Deadlift', content: [ { type: 'Mouvement Principal', ex: 'Deadlift', sets: '5x5', pct: 65, instruction: null }, { type: 'Assistance', ex: 'Romanian Deadlift (RDL)', sets: '4x8', pct: null, instruction: "Léger. Étirement ischios, dos droit." }, { type: 'Assistance', ex: 'Hip Thrusts', sets: '3x12', pct: null, instruction: "Chargez pour sentir la contraction fessiers." }, { type: 'Accessoire', ex: 'Pull-ups', sets: '4x AMRAP', pct: null, instruction: "Lestez si > 12 reps." }, { type: 'Accessoire', ex: 'Gainage planche', sets: '3x60s', pct: null, instruction: "Poids de corps." }, ] },
-                 { week: 1, day: 4, phase: 'Repos', mainMove: 'Repos', content: [] },
-                 { week: 1, day: 5, phase: 'Accumulation', mainMove: 'Strict Press', content: [ { type: 'Mouvement Principal', ex: 'Strict Press', sets: '5x5', pct: 65, instruction: null }, { type: 'Assistance', ex: 'Front Squat', sets: '4x5', pct: 70, instruction: null }, { type: 'Assistance', ex: 'Face Pulls', sets: '3x15', pct: null, instruction: "Léger, focus sur l'arrière d'épaule." }, { type: 'Accessoire', ex: 'Élévations latérales', sets: '3x12', pct: null, instruction: "Léger, contrôle." }, { type: 'Accessoire', ex: 'Curl Biceps', sets: '3x12', pct: null, instruction: "Modéré." }, ] },
-                 { week: 2, day: 1, phase: 'Accumulation', mainMove: 'Back Squat', content: [ { type: 'Mouvement Principal', ex: 'Back Squat', sets: '5x5', pct: 70, instruction: null }, { type: 'Assistance', ex: 'Good Morning', sets: '4x8', pct: null, instruction: "Léger. Focus technique, dos droit." }, { type: 'Assistance', ex: 'Fentes Bulgares', sets: '3x10/jambe', pct: null, instruction: "Difficile mais propre (RIR 2)." }, { type: 'Accessoire', ex: 'GHD Sit-ups', sets: '3x15', pct: null, instruction: "Poids de corps." }, { type: 'Accessoire', ex: 'Mollets debout', sets: '3x20', pct: null, instruction: "Modéré, contraction max." }, ] },
-                 { week: 2, day: 2, phase: 'Accumulation', mainMove: 'Bench Press', content: [ { type: 'Mouvement Principal', ex: 'Bench Press', sets: '5x5', pct: 70, instruction: null }, { type: 'Assistance', ex: 'Push Press', sets: '4x6', pct: null, instruction: "Charge explosive, plus lourde que SP." }, { type: 'Assistance', ex: 'DB Incline Press', sets: '3x10', pct: null, instruction: "Modéré, contrôle total (RIR 2)." }, { type: 'Accessoire', ex: 'Tirage Horizontal (Row)', sets: '4x12', pct: null, instruction: "Focus sur la contraction des dorsaux." }, { type: 'Accessoire', ex: 'Extensions Triceps', sets: '3x15', pct: null, instruction: "Léger, brûlure musculaire." }, ] },
-                 { week: 2, day: 3, phase: 'Accumulation', mainMove: 'Deadlift', content: [ { type: 'Mouvement Principal', ex: 'Deadlift', sets: '5x5', pct: 70, instruction: null }, { type: 'Assistance', ex: 'Romanian Deadlift (RDL)', sets: '4x8', pct: null, instruction: "Léger. Étirement ischios, dos droit." }, { type: 'Assistance', ex: 'Hip Thrusts', sets: '3x12', pct: null, instruction: "Chargez pour sentir la contraction fessiers." }, { type: 'Accessoire', ex: 'Pull-ups', sets: '4x AMRAP', pct: null, instruction: "Lestez si > 12 reps." }, { type: 'Accessoire', ex: 'Gainage planche', sets: '3x60s', pct: null, instruction: "Poids de corps." }, ] },
-                 { week: 2, day: 4, phase: 'Repos', mainMove: 'Repos', content: [] },
-                 { week: 2, day: 5, phase: 'Accumulation', mainMove: 'Strict Press', content: [ { type: 'Mouvement Principal', ex: 'Strict Press', sets: '5x5', pct: 70, instruction: null }, { type: 'Assistance', ex: 'Front Squat', sets: '4x5', pct: 75, instruction: null }, { type: 'Assistance', ex: 'Face Pulls', sets: '3x15', pct: null, instruction: "Léger, focus sur l'arrière d'épaule." }, { type: 'Accessoire', ex: 'Élévations latérales', sets: '3x12', pct: null, instruction: "Léger, contrôle." }, { type: 'Accessoire', ex: 'Curl Biceps', sets: '3x12', pct: null, instruction: "Modéré." }, ] },
-                 { week: 3, day: 1, phase: 'Accumulation', mainMove: 'Back Squat', content: [ { type: 'Mouvement Principal', ex: 'Back Squat', sets: '5x5', pct: 75, instruction: null }, { type: 'Assistance', ex: 'Good Morning', sets: '4x8', pct: null, instruction: "Léger. Focus technique, dos droit." }, { type: 'Assistance', ex: 'Fentes Bulgares', sets: '3x10/jambe', pct: null, instruction: "Difficile mais propre (RIR 2)." }, { type: 'Accessoire', ex: 'GHD Sit-ups', sets: '3x15', pct: null, instruction: "Poids de corps." }, { type: 'Accessoire', ex: 'Mollets debout', sets: '3x20', pct: null, instruction: "Modéré, contraction max." }, ] },
-                 { week: 3, day: 2, phase: 'Accumulation', mainMove: 'Bench Press', content: [ { type: 'Mouvement Principal', ex: 'Bench Press', sets: '5x5', pct: 75, instruction: null }, { type: 'Assistance', ex: 'Push Press', sets: '4x6', pct: null, instruction: "Charge explosive, plus lourde que SP." }, { type: 'Assistance', ex: 'DB Incline Press', sets: '3x10', pct: null, instruction: "Modéré, contrôle total (RIR 2)." }, { type: 'Accessoire', ex: 'Tirage Horizontal (Row)', sets: '4x12', pct: null, instruction: "Focus sur la contraction des dorsaux." }, { type: 'Accessoire', ex: 'Extensions Triceps', sets: '3x15', pct: null, instruction: "Léger, brûlure musculaire." }, ] },
-                 { week: 3, day: 3, phase: 'Accumulation', mainMove: 'Deadlift', content: [ { type: 'Mouvement Principal', ex: 'Deadlift', sets: '5x5', pct: 75, instruction: null }, { type: 'Assistance', ex: 'Romanian Deadlift (RDL)', sets: '4x8', pct: null, instruction: "Léger. Étirement ischios, dos droit." }, { type: 'Assistance', ex: 'Hip Thrusts', sets: '3x12', pct: null, instruction: "Chargez pour sentir la contraction fessiers." }, { type: 'Accessoire', ex: 'Pull-ups', sets: '4x AMRAP', pct: null, instruction: "Lestez si > 12 reps." }, { type: 'Accessoire', ex: 'Gainage planche', sets: '3x60s', pct: null, instruction: "Poids de corps." }, ] },
-                 { week: 3, day: 4, phase: 'Repos', mainMove: 'Repos', content: [] },
-                 { week: 3, day: 5, phase: 'Accumulation', mainMove: 'Strict Press', content: [ { type: 'Mouvement Principal', ex: 'Strict Press', sets: '5x5', pct: 75, instruction: null }, { type: 'Assistance', ex: 'Front Squat', sets: '4x5', pct: 80, instruction: null }, { type: 'Assistance', ex: 'Face Pulls', sets: '3x15', pct: null, instruction: "Léger, focus sur l'arrière d'épaule." }, { type: 'Accessoire', ex: 'Élévations latérales', sets: '3x12', pct: null, instruction: "Léger, contrôle." }, { type: 'Accessoire', ex: 'Curl Biceps', sets: '3x12', pct: null, instruction: "Modéré." }, ] },
-                 { week: 4, day: 1, phase: 'Accumulation', mainMove: 'Back Squat', content: [ { type: 'Mouvement Principal', ex: 'Back Squat', sets: '1x5, 1x5, 1x5+', pct: [65, 75, 85], instruction: null }, { type: 'Assistance', ex: 'Good Morning', sets: '3x8', pct: null, instruction: "Léger. Focus technique." }, { type: 'Assistance', ex: 'Fentes Bulgares', sets: '3x8/jambe', pct: null, instruction: "Difficile mais propre (RIR 2)." }, { type: 'Accessoire', ex: 'GHD Sit-ups', sets: '3xAMRAP', pct: null, instruction: "Poids de corps." } ] },
-                 { week: 4, day: 2, phase: 'Accumulation', mainMove: 'Bench Press', content: [ { type: 'Mouvement Principal', ex: 'Bench Press', sets: '1x5, 1x5, 1x5+', pct: [65, 75, 85], instruction: null }, { type: 'Assistance', ex: 'Push Press', sets: '3x5', pct: null, instruction: "Charge explosive." }, { type: 'Assistance', ex: 'DB Incline Press', sets: '3x8', pct: null, instruction: "Modéré (RIR 2)." }, { type: 'Accessoire', ex: 'Tirage Horizontal (Row)', sets: '3x10', pct: null, instruction: "Focus contraction." } ] },
-                 { week: 4, day: 3, phase: 'Accumulation', mainMove: 'Deadlift', content: [ { type: 'Mouvement Principal', ex: 'Deadlift', sets: '1x5, 1x5, 1x5+', pct: [65, 75, 85], instruction: null }, { type: 'Assistance', ex: 'Romanian Deadlift (RDL)', sets: '3x8', pct: null, instruction: "Léger, focus technique." }, { type: 'Assistance', ex: 'Hip Thrusts', sets: '3x10', pct: null, instruction: "Lourd, contraction max." }, { type: 'Accessoire', ex: 'Pull-ups (lestées)', sets: '3x8', pct: null, instruction: "Charge pour 8 reps (RIR 1)." } ] },
-                 { week: 4, day: 4, phase: 'Repos', mainMove: 'Repos', content: [] },
-                 { week: 4, day: 5, phase: 'Accumulation', mainMove: 'Strict Press', content: [ { type: 'Mouvement Principal', ex: 'Strict Press', sets: '1x5, 1x5, 1x5+', pct: [65, 75, 85], instruction: null }, { type: 'Assistance', ex: 'Front Squat', sets: '1x5, 1x5, 1x3+', pct: [70, 80, 85], instruction: null }, { type: 'Assistance', ex: 'Face Pulls', sets: '3x12', pct: null, instruction: "Léger, contrôle." } ] },
-                 { week: 5, day: 1, phase: 'Intensification', mainMove: 'Back Squat', content: [ { type: 'Mouvement Principal', ex: 'Back Squat', sets: '5x3', pct: 80, instruction: null }, { type: 'Assistance', ex: 'Pause Back Squat (3s)', sets: '4x3', pct: null, instruction: "~60% de la charge du jour. Focus contrôle." }, { type: 'Assistance', ex: 'Box Jumps', sets: '5x5', pct: null, instruction: "Hauteur max, focus explosivité." }, { type: 'Accessoire', ex: 'Toes-to-bar', sets: '3x12', pct: null, instruction: "Qualité avant quantité." } ] },
-                 { week: 5, day: 2, phase: 'Intensification', mainMove: 'Bench Press', content: [ { type: 'Mouvement Principal', ex: 'Bench Press', sets: '5x3', pct: 80, instruction: null }, { type: 'Assistance', ex: 'Close Grip Bench Press', sets: '4x5', pct: null, instruction: "~70% du BP. Focus triceps." }, { type: 'Assistance', ex: 'DB Skullcrushers', sets: '3x10', pct: null, instruction: "Modéré, contrôle." }, { type: 'Accessoire', ex: 'Pendlay Row', sets: '4x8', pct: null, instruction: "Lourd et explosif, dos parallèle au sol." } ] },
-                 { week: 5, day: 3, phase: 'Intensification', mainMove: 'Deadlift', content: [ { type: 'Mouvement Principal', ex: 'Deadlift', sets: '5x3', pct: 80, instruction: null }, { type: 'Assistance', ex: 'Deficit Deadlift (5cm)', sets: '4x3', pct: null, instruction: "~70% du DL du jour. Focus vitesse." }, { type: 'Assistance', ex: 'GHD Back Extensions', sets: '3x12', pct: null, instruction: "Poids de corps ou lest léger." }, { type: 'Accessoire', ex: 'Kettlebell Swings (lourds)', sets: '4x15', pct: null, instruction: "Explosivité des hanches." } ] },
-                 { week: 5, day: 4, phase: 'Repos', mainMove: 'Repos', content: [] },
-                 { week: 5, day: 5, phase: 'Intensification', mainMove: 'Strict Press', content: [ { type: 'Mouvement Principal', ex: 'Strict Press', sets: '5x3', pct: 80, instruction: null }, { type: 'Assistance', ex: 'Front Squat', sets: '3x3', pct: 85, instruction: null }, { type: 'Assistance', ex: 'Band Pull-Aparts', sets: '3x20', pct: null, instruction: "Échauffement et santé de l'épaule." }, { type: 'Accessoire', ex: 'Arnold Press', sets: '3x10', pct: null, instruction: "Modéré, contrôle total du mouvement." } ] },
-                 { week: 6, day: 1, phase: 'Intensification', mainMove: 'Back Squat', content: [ { type: 'Mouvement Principal', ex: 'Back Squat', sets: '5x3', pct: 85, instruction: null }, { type: 'Assistance', ex: 'Pause Back Squat (3s)', sets: '4x3', pct: null, instruction: "~60% de la charge du jour. Focus contrôle." }, { type: 'Assistance', ex: 'Box Jumps', sets: '5x5', pct: null, instruction: "Hauteur max, focus explosivité." }, { type: 'Accessoire', ex: 'Toes-to-bar', sets: '3x12', pct: null, instruction: "Qualité avant quantité." } ] },
-                 { week: 6, day: 2, phase: 'Intensification', mainMove: 'Bench Press', content: [ { type: 'Mouvement Principal', ex: 'Bench Press', sets: '5x3', pct: 85, instruction: null }, { type: 'Assistance', ex: 'Close Grip Bench Press', sets: '4x5', pct: null, instruction: "~70% du BP. Focus triceps." }, { type: 'Assistance', ex: 'DB Skullcrushers', sets: '3x10', pct: null, instruction: "Modéré, contrôle." }, { type: 'Accessoire', ex: 'Pendlay Row', sets: '4x8', pct: null, instruction: "Lourd et explosif, dos parallèle au sol." } ] },
-                 { week: 6, day: 3, phase: 'Intensification', mainMove: 'Deadlift', content: [ { type: 'Mouvement Principal', ex: 'Deadlift', sets: '5x3', pct: 85, instruction: null }, { type: 'Assistance', ex: 'Deficit Deadlift (5cm)', sets: '4x3', pct: null, instruction: "~70% du DL du jour. Focus vitesse." }, { type: 'Assistance', ex: 'GHD Back Extensions', sets: '3x12', pct: null, instruction: "Poids de corps ou lest léger." }, { type: 'Accessoire', ex: 'Kettlebell Swings (lourds)', sets: '4x15', pct: null, instruction: "Explosivité des hanches." } ] },
-                 { week: 6, day: 4, phase: 'Repos', mainMove: 'Repos', content: [] },
-                 { week: 6, day: 5, phase: 'Intensification', mainMove: 'Strict Press', content: [ { type: 'Mouvement Principal', ex: 'Strict Press', sets: '5x3', pct: 85, instruction: null }, { type: 'Assistance', ex: 'Front Squat', sets: '3x3', pct: 90, instruction: null }, { type: 'Assistance', ex: 'Band Pull-Aparts', sets: '3x20', pct: null, instruction: "Échauffement et santé de l'épaule." }, { type: 'Accessoire', ex: 'Arnold Press', sets: '3x10', pct: null, instruction: "Modéré, contrôle total du mouvement." } ] },
-                 { week: 7, day: 1, phase: 'Intensification', mainMove: 'Back Squat', content: [ { type: 'Mouvement Principal', ex: 'Back Squat', sets: '1x3, 1x3, 1x3+', pct: [75, 85, 90], instruction: null }, { type: 'Assistance', ex: 'Pause Back Squat (1s)', sets: '3x2', pct: null, instruction: "~60% de la charge du jour." }, { type: 'Assistance', ex: 'Box Jumps', sets: '3x5', pct: null, instruction: "Explosif." } ] },
-                 { week: 7, day: 2, phase: 'Intensification', mainMove: 'Bench Press', content: [ { type: 'Mouvement Principal', ex: 'Bench Press', sets: '1x3, 1x3, 1x3+', pct: [75, 85, 90], instruction: null }, { type: 'Assistance', ex: 'Close Grip Bench Press', sets: '3x5', pct: null, instruction: "~70% du BP." }, { type: 'Accessoire', ex: 'Pendlay Row', sets: '3x8', pct: null, instruction: "Lourd et explosif." } ] },
-                 { week: 7, day: 3, phase: 'Intensification', mainMove: 'Deadlift', content: [ { type: 'Mouvement Principal', ex: 'Deadlift', sets: '1x3, 1x3, 1x3+', pct: [75, 85, 90], instruction: null }, { type: 'Assistance', ex: 'Deficit Deadlift (5cm)', sets: '3x3', pct: null, instruction: "~70% du DL du jour." }, { type: 'Accessoire', ex: 'Kettlebell Swings', sets: '3x15', pct: null, instruction: "Explosif." } ] },
-                 { week: 7, day: 4, phase: 'Repos', mainMove: 'Repos', content: [] },
-                 { week: 7, day: 5, phase: 'Intensification', mainMove: 'Strict Press', content: [ { type: 'Mouvement Principal', ex: 'Strict Press', sets: '1x3, 1x3, 1x3+', pct: [75, 85, 90], instruction: null }, { type: 'Assistance', ex: 'Front Squat', sets: '1x3, 1x3, 1x1+', pct: [80, 85, 92], instruction: null }, { type: 'Accessoire', ex: 'Arnold Press', sets: '3x8', pct: null, instruction: "Modéré." } ] },
-                 { week: 8, day: 1, phase: 'Deload', mainMove: 'Back Squat', content: [ { type: 'Mouvement Principal', ex: 'Back Squat', sets: '3x5', pct: 50, instruction: null }, { type: 'Assistance', ex: 'Mobilité hanches', sets: '15 min', pct: null, instruction: "Focus sur l'amplitude." }, { type: 'Accessoire', ex: 'Gainage', sets: '3x45s', pct: null, instruction: "Poids de corps." } ] },
-                 { week: 8, day: 2, phase: 'Deload', mainMove: 'Bench Press', content: [ { type: 'Mouvement Principal', ex: 'Bench Press', sets: '3x5', pct: 50, instruction: null }, { type: 'Assistance', ex: 'Mobilité épaules', sets: '15 min', pct: null, instruction: "Focus sur l'amplitude." }, { type: 'Accessoire', ex: 'Face pulls légers', sets: '3x20', pct: null, instruction: "Très léger." } ] },
-                 { week: 8, day: 3, phase: 'Repos', mainMove: 'Repos', content: [] },
-                 { week: 8, day: 4, phase: 'Deload', mainMove: 'Deadlift', content: [ { type: 'Mouvement Principal', ex: 'Deadlift', sets: '3x5', pct: 50, instruction: null }, { type: 'Assistance', ex: 'Étirements chaîne postérieure', sets: '15 min', pct: null, instruction: "Doux et contrôlé." }, { type: 'Accessoire', ex: 'Bird-dog', sets: '3x10/côté', pct: null, instruction: "Poids de corps, focus stabilité." } ] },
-                 { week: 8, day: 5, phase: 'Repos', mainMove: 'Repos', content: [] },
-                 { week: 9, day: 1, phase: 'Réalisation', mainMove: 'Back Squat', content: [ { type: 'Mouvement Principal', ex: 'Back Squat', sets: '1x5, 1x3, 1x1+', pct: [75, 85, 95], instruction: null }, { type: 'Assistance', ex: 'Box Jumps (hauteur max)', sets: '5x3', pct: null, instruction: "Explosivité maximale." }, { type: 'Accessoire', ex: 'Core work', sets: '10 min', pct: null, instruction: "Choix libre, ex: Planche, L-sit." } ] },
-                 { week: 9, day: 2, phase: 'Réalisation', mainMove: 'Bench Press', content: [ { type: 'Mouvement Principal', ex: 'Bench Press', sets: '1x5, 1x3, 1x1+', pct: [75, 85, 95], instruction: null }, { type: 'Assistance', ex: 'Push Press', sets: '3x3', pct: null, instruction: "Modérément lourd." }, { type: 'Accessoire', ex: 'Band Pull-Aparts', sets: '3x15', pct: null, instruction: "Santé de l'épaule." } ] },
-                 { week: 9, day: 3, phase: 'Réalisation', mainMove: 'Deadlift', content: [ { type: 'Mouvement Principal', ex: 'Deadlift', sets: '1x5, 1x3, 1x1+', pct: [75, 85, 95], instruction: null }, { type: 'Assistance', ex: 'Broad Jumps', sets: '5x3', pct: null, instruction: "Distance maximale." }, { type: 'Accessoire', ex: 'GHD Back Extensions', sets: '3x10', pct: null, instruction: "Poids de corps." } ] },
-                 { week: 9, day: 4, phase: 'Repos', mainMove: 'Repos', content: [] },
-                 { week: 9, day: 5, phase: 'Réalisation', mainMove: 'Strict Press', content: [ { type: 'Mouvement Principal', ex: 'Strict Press', sets: '1x5, 1x3, 1x1+', pct: [75, 85, 95], instruction: null }, { type: 'Assistance', ex: 'Front Squat', sets: '3x1', pct: 95, instruction: null }, { type: 'Accessoire', ex: 'Face Pulls', sets: '3x15', pct: null, instruction: "Léger." } ] },
-                 { week: 10, day: 1, phase: 'Réalisation', mainMove: 'Back Squat', content: [ { type: 'Mouvement Principal', ex: 'Back Squat', sets: '1x3, 1x2, 1x1+', pct: [80, 90, 97], instruction: null }, { type: 'Assistance', ex: 'Box Jumps', sets: '3x3', pct: null, instruction: "Explosif." } ] },
-                 { week: 10, day: 2, phase: 'Réalisation', mainMove: 'Bench Press', content: [ { type: 'Mouvement Principal', ex: 'Bench Press', sets: '1x3, 1x2, 1x1+', pct: [80, 90, 97], instruction: null }, { type: 'Accessoire', ex: 'Band Pull-Aparts', sets: '2x15', pct: null, instruction: "Santé de l'épaule." } ] },
-                 { week: 10, day: 3, phase: 'Réalisation', mainMove: 'Deadlift', content: [ { type: 'Mouvement Principal', ex: 'Deadlift', sets: '1x3, 1x2, 1x1+', pct: [80, 90, 97], instruction: null }, { type: 'Assistance', ex: 'Broad Jumps', sets: '3x3', pct: null, instruction: "Explosif." } ] },
-                 { week: 10, day: 4, phase: 'Repos', mainMove: 'Repos', content: [] },
-                 { week: 10, day: 5, phase: 'Réalisation', mainMove: 'Strict Press', content: [ { type: 'Mouvement Principal', ex: 'Strict Press', sets: '1x3, 1x2, 1x1+', pct: [80, 90, 97], instruction: null }, { type: 'Assistance', ex: 'Front Squat', sets: '2x1', pct: 97, instruction: null } ] },
-                 { week: 11, day: 1, phase: 'Réalisation', mainMove: 'Back Squat', content: [ { type: 'Mouvement Principal', ex: 'Back Squat', sets: '1x3, 1x2, 1x1, 1x1+', pct: [70, 80, 90, 101], instruction: null } ] },
-                 { week: 11, day: 2, phase: 'Réalisation', mainMove: 'Bench Press', content: [ { type: 'Mouvement Principal', ex: 'Bench Press', sets: '1x3, 1x2, 1x1, 1x1+', pct: [70, 80, 90, 101], instruction: null } ] },
-                 { week: 11, day: 3, phase: 'Réalisation', mainMove: 'Deadlift', content: [ { type: 'Mouvement Principal', ex: 'Deadlift', sets: '1x3, 1x2, 1x1, 1x1+', pct: [70, 80, 90, 101], instruction: null } ] },
-                 { week: 11, day: 4, phase: 'Repos', mainMove: 'Repos', content: [] },
-                 { week: 11, day: 5, phase: 'Réalisation', mainMove: 'Strict Press', content: [ { type: 'Mouvement Principal', ex: 'Strict Press', sets: '1x3, 1x2, 1x1, 1x1+', pct: [70, 80, 90, 101], instruction: null } ] },
-                 { week: 12, day: 1, phase: 'Test 1RM', mainMove: 'Back Squat', content: [ { type: 'Test', ex: 'Back Squat', sets: 'Travail jusqu\'à un nouveau 1RM', pct: 100, instruction: "Échauffement progressif." } ] },
-                 { week: 12, day: 2, phase: 'Test 1RM', mainMove: 'Bench Press', content: [ { type: 'Test', ex: 'Bench Press', sets: 'Travail jusqu\'à un nouveau 1RM', pct: 100, instruction: "Échauffement progressif." }, { type: 'Test', ex: 'Strict Press', sets: 'Travail jusqu\'à un nouveau 1RM', pct: 100, instruction: "Après le Bench Press." } ] },
-                 { week: 12, day: 3, phase: 'Repos', mainMove: 'Repos', content: [] },
-                 { week: 12, day: 4, phase: 'Test 1RM', mainMove: 'Deadlift', content: [ { type: 'Test', ex: 'Deadlift', sets: 'Travail jusqu\'à un nouveau 1RM', pct: 100, instruction: "Échauffement progressif." } ] },
-                 { week: 12, day: 5, phase: 'Test 1RM', mainMove: 'Front Squat', content: [ { type: 'Test', ex: 'Front Squat', sets: 'Travail jusqu\'à un nouveau 1RM', pct: 100, instruction: "Échauffement progressif." } ] },
-            ];
 
+            const programData = [
+                { week: 1, day: 1, phase: 'Accumulation', mainMove: 'Back Squat', content: [ { type: 'Mouvement Principal', ex: 'Back Squat', sets: '5x5', pct: 65 }, { type: 'Assistance', ex: 'Good Morning', sets: '4x8', pct: null }, { type: 'Assistance', ex: 'Fentes Bulgares', sets: '3x10/jambe', pct: null }, { type: 'Accessoire', ex: 'GHD Sit-ups', sets: '3x15', pct: null }, { type: 'Accessoire', ex: 'Mollets debout', sets: '3x20', pct: null }, ] },
+                { week: 1, day: 2, phase: 'Accumulation', mainMove: 'Bench Press', content: [ { type: 'Mouvement Principal', ex: 'Bench Press', sets: '5x5', pct: 65 }, { type: 'Assistance', ex: 'Push Press', sets: '4x6', pct: null }, { type: 'Assistance', ex: 'DB Incline Press', sets: '3x10', pct: null }, { type: 'Accessoire', ex: 'Tirage Horizontal (Row)', sets: '4x12', pct: null }, { type: 'Accessoire', ex: 'Extensions Triceps', sets: '3x15', pct: null }, ] },
+                { week: 1, day: 3, phase: 'Accumulation', mainMove: 'Deadlift', content: [ { type: 'Mouvement Principal', ex: 'Deadlift', sets: '5x5', pct: 65 }, { type: 'Assistance', ex: 'Romanian Deadlift (RDL)', sets: '4x8', pct: null }, { type: 'Assistance', ex: 'Hip Thrusts', sets: '3x12', pct: null }, { type: 'Accessoire', ex: 'Pull-ups (lestées si possible)', sets: '4x AMRAP', pct: null }, { type: 'Accessoire', ex: 'Gainage planche', sets: '3x60s', pct: null }, ] },
+                { week: 1, day: 4, phase: 'Repos', mainMove: 'Repos', content: [] },
+                { week: 1, day: 5, phase: 'Accumulation', mainMove: 'Strict Press', content: [ { type: 'Mouvement Principal', ex: 'Strict Press', sets: '5x5', pct: 65 }, { type: 'Assistance', ex: 'Front Squat', sets: '4x5', pct: 70 }, { type: 'Assistance', ex: 'Face Pulls', sets: '3x15', pct: null }, { type: 'Accessoire', ex: 'Élévations latérales', sets: '3x12', pct: null }, { type: 'Accessoire', ex: 'Curl Biceps', sets: '3x12', pct: null }, ] },
+                { week: 2, day: 1, phase: 'Accumulation', mainMove: 'Back Squat', content: [ { type: 'Mouvement Principal', ex: 'Back Squat', sets: '5x5', pct: 70 }, { type: 'Assistance', ex: 'Good Morning', sets: '4x8', pct: null }, { type: 'Assistance', ex: 'Fentes Bulgares', sets: '3x10/jambe', pct: null }, { type: 'Accessoire', ex: 'GHD Sit-ups', sets: '3x15', pct: null }, { type: 'Accessoire', ex: 'Mollets debout', sets: '3x20', pct: null }, ] },
+                { week: 2, day: 2, phase: 'Accumulation', mainMove: 'Bench Press', content: [ { type: 'Mouvement Principal', ex: 'Bench Press', sets: '5x5', pct: 70 }, { type: 'Assistance', ex: 'Push Press', sets: '4x6', pct: null }, { type: 'Assistance', ex: 'DB Incline Press', sets: '3x10', pct: null }, { type: 'Accessoire', ex: 'Tirage Horizontal (Row)', sets: '4x12', pct: null }, { type: 'Accessoire', ex: 'Extensions Triceps', sets: '3x15', pct: null }, ] },
+                { week: 2, day: 3, phase: 'Accumulation', mainMove: 'Deadlift', content: [ { type: 'Mouvement Principal', ex: 'Deadlift', sets: '5x5', pct: 70 }, { type: 'Assistance', ex: 'Romanian Deadlift (RDL)', sets: '4x8', pct: null }, { type: 'Assistance', ex: 'Hip Thrusts', sets: '3x12', pct: null }, { type: 'Accessoire', ex: 'Pull-ups (lestées si possible)', sets: '4x AMRAP', pct: null }, { type: 'Accessoire', ex: 'Gainage planche', sets: '3x60s', pct: null }, ] },
+                { week: 2, day: 4, phase: 'Repos', mainMove: 'Repos', content: [] },
+                { week: 2, day: 5, phase: 'Accumulation', mainMove: 'Strict Press', content: [ { type: 'Mouvement Principal', ex: 'Strict Press', sets: '5x5', pct: 70 }, { type: 'Assistance', ex: 'Front Squat', sets: '4x5', pct: 75 }, { type: 'Assistance', ex: 'Face Pulls', sets: '3x15', pct: null }, { type: 'Accessoire', ex: 'Élévations latérales', sets: '3x12', pct: null }, { type: 'Accessoire', ex: 'Curl Biceps', sets: '3x12', pct: null }, ] },
+                { week: 3, day: 1, phase: 'Accumulation', mainMove: 'Back Squat', content: [ { type: 'Mouvement Principal', ex: 'Back Squat', sets: '5x5', pct: 75 }, { type: 'Assistance', ex: 'Good Morning', sets: '4x8', pct: null }, { type: 'Assistance', ex: 'Fentes Bulgares', sets: '3x10/jambe', pct: null }, { type: 'Accessoire', ex: 'GHD Sit-ups', sets: '3x15', pct: null }, { type: 'Accessoire', ex: 'Mollets debout', sets: '3x20', pct: null }, ] },
+                { week: 3, day: 2, phase: 'Accumulation', mainMove: 'Bench Press', content: [ { type: 'Mouvement Principal', ex: 'Bench Press', sets: '5x5', pct: 75 }, { type: 'Assistance', ex: 'Push Press', sets: '4x6', pct: null }, { type: 'Assistance', ex: 'DB Incline Press', sets: '3x10', pct: null }, { type: 'Accessoire', ex: 'Tirage Horizontal (Row)', sets: '4x12', pct: null }, { type: 'Accessoire', ex: 'Extensions Triceps', sets: '3x15', pct: null }, ] },
+                { week: 3, day: 3, phase: 'Accumulation', mainMove: 'Deadlift', content: [ { type: 'Mouvement Principal', ex: 'Deadlift', sets: '5x5', pct: 75 }, { type: 'Assistance', ex: 'Romanian Deadlift (RDL)', sets: '4x8', pct: null }, { type: 'Assistance', ex: 'Hip Thrusts', sets: '3x12', pct: null }, { type: 'Accessoire', ex: 'Pull-ups (lestées si possible)', sets: '4x AMRAP', pct: null }, { type: 'Accessoire', ex: 'Gainage planche', sets: '3x60s', pct: null }, ] },
+                { week: 3, day: 4, phase: 'Repos', mainMove: 'Repos', content: [] },
+                { week: 3, day: 5, phase: 'Accumulation', mainMove: 'Strict Press', content: [ { type: 'Mouvement Principal', ex: 'Strict Press', sets: '5x5', pct: 75 }, { type: 'Assistance', ex: 'Front Squat', sets: '4x5', pct: 80 }, { type: 'Assistance', ex: 'Face Pulls', sets: '3x15', pct: null }, { type: 'Accessoire', ex: 'Élévations latérales', sets: '3x12', pct: null }, { type: 'Accessoire', ex: 'Curl Biceps', sets: '3x12', pct: null }, ] },
+                { week: 4, day: 1, phase: 'Accumulation', mainMove: 'Back Squat', content: [ { type: 'Mouvement Principal', ex: 'Back Squat', sets: '1x5@65%, 1x5@75%, 1x5+@85%', pct: 85 }, { type: 'Assistance', ex: 'Good Morning', sets: '3x8', pct: null }, { type: 'Assistance', ex: 'Fentes Bulgares', sets: '3x8/jambe', pct: null }, { type: 'Accessoire', ex: 'GHD Sit-ups', sets: '3xAMRAP', pct: null } ] },
+                { week: 4, day: 2, phase: 'Accumulation', mainMove: 'Bench Press', content: [ { type: 'Mouvement Principal', ex: 'Bench Press', sets: '1x5@65%, 1x5@75%, 1x5+@85%', pct: 85 }, { type: 'Assistance', ex: 'Push Press', sets: '3x5', pct: null }, { type: 'Assistance', ex: 'DB Incline Press', sets: '3x8', pct: null }, { type: 'Accessoire', ex: 'Tirage Horizontal (Row)', sets: '3x10', pct: null } ] },
+                { week: 4, day: 3, phase: 'Accumulation', mainMove: 'Deadlift', content: [ { type: 'Mouvement Principal', ex: 'Deadlift', sets: '1x5@65%, 1x5@75%, 1x5+@85%', pct: 85 }, { type: 'Assistance', ex: 'Romanian Deadlift (RDL)', sets: '3x8', pct: null }, { type: 'Assistance', ex: 'Hip Thrusts', sets: '3x10', pct: null }, { type: 'Accessoire', ex: 'Pull-ups (lestées)', sets: '3x8', pct: null } ] },
+                { week: 4, day: 4, phase: 'Repos', mainMove: 'Repos', content: [] },
+                { week: 4, day: 5, phase: 'Accumulation', mainMove: 'Strict Press', content: [ { type: 'Mouvement Principal', ex: 'Strict Press', sets: '1x5@65%, 1x5@75%, 1x5+@85%', pct: 85 }, { type: 'Assistance', ex: 'Front Squat', sets: '1x5@70%, 1x5@80%, 1x3+@85%', pct: 85 }, { type: 'Assistance', ex: 'Face Pulls', sets: '3x12', pct: null } ] },
+                { week: 5, day: 1, phase: 'Intensification', mainMove: 'Back Squat', content: [ { type: 'Mouvement Principal', ex: 'Back Squat', sets: '5x3', pct: 80 }, { type: 'Assistance', ex: 'Pause Back Squat (3s)', sets: '4x3', pct: null }, { type: 'Assistance', ex: 'Box Jumps', sets: '5x5', pct: null }, { type: 'Accessoire', ex: 'Toes-to-bar', sets: '3x12', pct: null } ] },
+                { week: 5, day: 2, phase: 'Intensification', mainMove: 'Bench Press', content: [ { type: 'Mouvement Principal', ex: 'Bench Press', sets: '5x3', pct: 80 }, { type: 'Assistance', ex: 'Close Grip Bench Press', sets: '4x5', pct: null }, { type: 'Assistance', ex: 'DB Skullcrushers', sets: '3x10', pct: null }, { type: 'Accessoire', ex: 'Pendlay Row', sets: '4x8', pct: null } ] },
+                { week: 5, day: 3, phase: 'Intensification', mainMove: 'Deadlift', content: [ { type: 'Mouvement Principal', ex: 'Deadlift', sets: '5x3', pct: 80 }, { type: 'Assistance', ex: 'Deficit Deadlift (5cm)', sets: '4x3', pct: null }, { type: 'Assistance', ex: 'GHD Back Extensions', sets: '3x12', pct: null }, { type: 'Accessoire', ex: 'Kettlebell Swings (lourds)', sets: '4x15', pct: null } ] },
+                { week: 5, day: 4, phase: 'Repos', mainMove: 'Repos', content: [] },
+                { week: 5, day: 5, phase: 'Intensification', mainMove: 'Strict Press', content: [ { type: 'Mouvement Principal', ex: 'Strict Press', sets: '5x3', pct: 80 }, { type: 'Assistance', ex: 'Front Squat', sets: '3x3', pct: 85 }, { type: 'Assistance', ex: 'Band Pull-Aparts', sets: '3x20', pct: null }, { type: 'Accessoire', ex: 'Arnold Press', sets: '3x10', pct: null } ] },
+                { week: 6, day: 1, phase: 'Intensification', mainMove: 'Back Squat', content: [ { type: 'Mouvement Principal', ex: 'Back Squat', sets: '5x3', pct: 85 }, { type: 'Assistance', ex: 'Pause Back Squat (3s)', sets: '4x3', pct: null }, { type: 'Assistance', ex: 'Box Jumps', sets: '5x5', pct: null }, { type: 'Accessoire', ex: 'Toes-to-bar', sets: '3x12', pct: null } ] },
+                { week: 6, day: 2, phase: 'Intensification', mainMove: 'Bench Press', content: [ { type: 'Mouvement Principal', ex: 'Bench Press', sets: '5x3', pct: 85 }, { type: 'Assistance', ex: 'Close Grip Bench Press', sets: '4x5', pct: null }, { type: 'Assistance', ex: 'DB Skullcrushers', sets: '3x10', pct: null }, { type: 'Accessoire', ex: 'Pendlay Row', sets: '4x8', pct: null } ] },
+                { week: 6, day: 3, phase: 'Intensification', mainMove: 'Deadlift', content: [ { type: 'Mouvement Principal', ex: 'Deadlift', sets: '5x3', pct: 85 }, { type: 'Assistance', ex: 'Deficit Deadlift (5cm)', sets: '4x3', pct: null }, { type: 'Assistance', ex: 'GHD Back Extensions', sets: '3x12', pct: null }, { type: 'Accessoire', ex: 'Kettlebell Swings (lourds)', sets: '4x15', pct: null } ] },
+                { week: 6, day: 4, phase: 'Repos', mainMove: 'Repos', content: [] },
+                { week: 6, day: 5, phase: 'Intensification', mainMove: 'Strict Press', content: [ { type: 'Mouvement Principal', ex: 'Strict Press', sets: '5x3', pct: 85 }, { type: 'Assistance', ex: 'Front Squat', sets: '3x3', pct: 90 }, { type: 'Assistance', ex: 'Band Pull-Aparts', sets: '3x20', pct: null }, { type: 'Accessoire', ex: 'Arnold Press', sets: '3x10', pct: null } ] },
+                { week: 7, day: 1, phase: 'Intensification', mainMove: 'Back Squat', content: [ { type: 'Mouvement Principal', ex: 'Back Squat', sets: '1x3@75%, 1x3@85%, 1x3+@90%', pct: 90 }, { type: 'Assistance', ex: 'Pause Back Squat (1s)', sets: '3x2', pct: null }, { type: 'Assistance', ex: 'Box Jumps', sets: '3x5', pct: null } ] },
+                { week: 7, day: 2, phase: 'Intensification', mainMove: 'Bench Press', content: [ { type: 'Mouvement Principal', ex: 'Bench Press', sets: '1x3@75%, 1x3@85%, 1x3+@90%', pct: 90 }, { type: 'Assistance', ex: 'Close Grip Bench Press', sets: '3x5', pct: null }, { type: 'Accessoire', ex: 'Pendlay Row', sets: '3x8', pct: null } ] },
+                { week: 7, day: 3, phase: 'Intensification', mainMove: 'Deadlift', content: [ { type: 'Mouvement Principal', ex: 'Deadlift', sets: '1x3@75%, 1x3@85%, 1x3+@90%', pct: 90 }, { type: 'Assistance', ex: 'Deficit Deadlift (5cm)', sets: '3x3', pct: null }, { type: 'Accessoire', ex: 'Kettlebell Swings', sets: '3x15', pct: null } ] },
+                { week: 7, day: 4, phase: 'Repos', mainMove: 'Repos', content: [] },
+                { week: 7, day: 5, phase: 'Intensification', mainMove: 'Strict Press', content: [ { type: 'Mouvement Principal', ex: 'Strict Press', sets: '1x3@75%, 1x3@85%, 1x3+@90%', pct: 90 }, { type: 'Assistance', ex: 'Front Squat', sets: '1x3@80%, 1x3@85%, 1x1+@92%', pct: 92 }, { type: 'Accessoire', ex: 'Arnold Press', sets: '3x8', pct: null } ] },
+                { week: 8, day: 1, phase: 'Deload', mainMove: 'Back Squat', content: [ { type: 'Mouvement Principal', ex: 'Back Squat', sets: '3x5', pct: 50 }, { type: 'Assistance', ex: 'Mobilité hanches', sets: '15 min', pct: null }, { type: 'Accessoire', ex: 'Gainage', sets: '3x45s', pct: null } ] },
+                { week: 8, day: 2, phase: 'Deload', mainMove: 'Bench Press', content: [ { type: 'Mouvement Principal', ex: 'Bench Press', sets: '3x5', pct: 50 }, { type: 'Assistance', ex: 'Mobilité épaules', sets: '15 min', pct: null }, { type: 'Accessoire', ex: 'Face pulls légers', sets: '3x20', pct: null } ] },
+                { week: 8, day: 3, phase: 'Repos', mainMove: 'Repos', content: [] },
+                { week: 8, day: 4, phase: 'Deload', mainMove: 'Deadlift', content: [ { type: 'Mouvement Principal', ex: 'Deadlift', sets: '3x5', pct: 50 }, { type: 'Assistance', ex: 'Étirements chaîne postérieure', sets: '15 min', pct: null }, { type: 'Accessoire', ex: 'Bird-dog', sets: '3x10/côté', pct: null } ] },
+                { week: 8, day: 5, phase: 'Repos', mainMove: 'Repos', content: [] },
+                { week: 9, day: 1, phase: 'Réalisation', mainMove: 'Back Squat', content: [ { type: 'Mouvement Principal', ex: 'Back Squat', sets: '1x5@75%, 1x3@85%, 1x1+@95%', pct: 95 }, { type: 'Assistance', ex: 'Box Jumps (hauteur max)', sets: '5x3', pct: null }, { type: 'Accessoire', ex: 'Core work', sets: '10 min', pct: null } ] },
+                { week: 9, day: 2, phase: 'Réalisation', mainMove: 'Bench Press', content: [ { type: 'Mouvement Principal', ex: 'Bench Press', sets: '1x5@75%, 1x3@85%, 1x1+@95%', pct: 95 }, { type: 'Assistance', ex: 'Push Press', sets: '3x3', pct: null }, { type: 'Accessoire', ex: 'Band Pull-Aparts', sets: '3x15', pct: null } ] },
+                { week: 9, day: 3, phase: 'Réalisation', mainMove: 'Deadlift', content: [ { type: 'Mouvement Principal', ex: 'Deadlift', sets: '1x5@75%, 1x3@85%, 1x1+@95%', pct: 95 }, { type: 'Assistance', ex: 'Broad Jumps', sets: '5x3', pct: null }, { type: 'Accessoire', ex: 'GHD Back Extensions', sets: '3x10', pct: null } ] },
+                { week: 9, day: 4, phase: 'Repos', mainMove: 'Repos', content: [] },
+                { week: 9, day: 5, phase: 'Réalisation', mainMove: 'Strict Press', content: [ { type: 'Mouvement Principal', ex: 'Strict Press', sets: '1x5@75%, 1x3@85%, 1x1+@95%', pct: 95 }, { type: 'Assistance', ex: 'Front Squat', sets: '3x1', pct: 95 }, { type: 'Accessoire', ex: 'Face Pulls', sets: '3x15', pct: null } ] },
+                { week: 10, day: 1, phase: 'Réalisation', mainMove: 'Back Squat', content: [ { type: 'Mouvement Principal', ex: 'Back Squat', sets: '1x3@80%, 1x2@90%, 1x1+@97%', pct: 97 }, { type: 'Assistance', ex: 'Box Jumps', sets: '3x3', pct: null } ] },
+                { week: 10, day: 2, phase: 'Réalisation', mainMove: 'Bench Press', content: [ { type: 'Mouvement Principal', ex: 'Bench Press', sets: '1x3@80%, 1x2@90%, 1x1+@97%', pct: 97 }, { type: 'Accessoire', ex: 'Band Pull-Aparts', sets: '2x15', pct: null } ] },
+                { week: 10, day: 3, phase: 'Réalisation', mainMove: 'Deadlift', content: [ { type: 'Mouvement Principal', ex: 'Deadlift', sets: '1x3@80%, 1x2@90%, 1x1+@97%', pct: 97 }, { type: 'Assistance', ex: 'Broad Jumps', sets: '3x3', pct: null } ] },
+                { week: 10, day: 4, phase: 'Repos', mainMove: 'Repos', content: [] },
+                { week: 10, day: 5, phase: 'Réalisation', mainMove: 'Strict Press', content: [ { type: 'Mouvement Principal', ex: 'Strict Press', sets: '1x3@80%, 1x2@90%, 1x1+@97%', pct: 97 }, { type: 'Assistance', ex: 'Front Squat', sets: '2x1', pct: 97 } ] },
+                { week: 11, day: 1, phase: 'Réalisation', mainMove: 'Back Squat', content: [ { type: 'Mouvement Principal', ex: 'Back Squat', sets: '1x3@70%, 1x2@80%, 1x1@90%, 1x1+@101%', pct: 101 } ] },
+                { week: 11, day: 2, phase: 'Réalisation', mainMove: 'Bench Press', content: [ { type: 'Mouvement Principal', ex: 'Bench Press', sets: '1x3@70%, 1x2@80%, 1x1@90%, 1x1+@101%', pct: 101 } ] },
+                { week: 11, day: 3, phase: 'Réalisation', mainMove: 'Deadlift', content: [ { type: 'Mouvement Principal', ex: 'Deadlift', sets: '1x3@70%, 1x2@80%, 1x1@90%, 1x1+@101%', pct: 101 } ] },
+                { week: 11, day: 4, phase: 'Repos', mainMove: 'Repos', content: [] },
+                { week: 11, day: 5, phase: 'Réalisation', mainMove: 'Strict Press', content: [ { type: 'Mouvement Principal', ex: 'Strict Press', sets: '1x3@70%, 1x2@80%, 1x1@90%, 1x1+@101%', pct: 101 } ] },
+                { week: 12, day: 1, phase: 'Test 1RM', mainMove: 'Back Squat', content: [ { type: 'Test', ex: 'Back Squat', sets: 'Travail jusqu\'à un nouveau 1RM', pct: 100 } ] },
+                { week: 12, day: 2, phase: 'Test 1RM', mainMove: 'Bench Press', content: [ { type: 'Test', ex: 'Bench Press', sets: 'Travail jusqu\'à un nouveau 1RM', pct: 100 }, { type: 'Test', ex: 'Strict Press', sets: 'Travail jusqu\'à un nouveau 1RM', pct: 100 } ] },
+                { week: 12, day: 3, phase: 'Repos', mainMove: 'Repos', content: [] },
+                { week: 12, day: 4, phase: 'Test 1RM', mainMove: 'Deadlift', content: [ { type: 'Test', ex: 'Deadlift', sets: 'Travail jusqu\'à un nouveau 1RM', pct: 100 } ] },
+                { week: 12, day: 5, phase: 'Test 1RM', mainMove: 'Front Squat', content: [ { type: 'Test', ex: 'Front Squat', sets: 'Travail jusqu\'à un nouveau 1RM', pct: 100 } ] },
+            ];
+            
             let currentWeek = 1;
             let currentDay = 1;
             let progressionChart = null;
-            let completionStatus = {};
-            const COMPLETION_STORAGE_KEY = 'programCompletionStatus';
-
-            const checkSVG = `<svg class="check-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.052-.143z" clip-rule="evenodd" /></svg>`;
-
-            const loadCompletionStatus = () => {
-                try {
-                    const storedStatus = localStorage.getItem(COMPLETION_STORAGE_KEY);
-                    completionStatus = storedStatus ? JSON.parse(storedStatus) : {};
-                } catch (e) {
-                    console.error("Impossible d'accéder au localStorage. La progression ne sera pas sauvegardée.", e);
-                    completionStatus = {};
-                }
-            };
-
-            const saveCompletionStatus = () => {
-                try {
-                    localStorage.setItem(COMPLETION_STORAGE_KEY, JSON.stringify(completionStatus));
-                } catch (e) {
-                    console.error("Impossible d'accéder au localStorage. La progression ne sera pas sauvegardée.", e);
-                }
-            };
-
+            
             const roundToNearest = (value, nearest) => Math.round(value / nearest) * nearest;
 
             const calculateTMs = () => {
@@ -308,24 +268,12 @@
                 document.getElementById('bp-tm').textContent = TMs['Bench Press'] + ' kg';
                 document.getElementById('sp-tm').textContent = TMs['Strict Press'] + ' kg';
                 
-                if (document.getElementById('content-program').classList.contains('hidden') === false) {
-                    renderWorkout(currentWeek, currentDay);
-                }
-            };
-
-            const handleDayCompletion = (week, day, isCompleted) => {
-                if (!completionStatus[week]) {
-                    completionStatus[week] = {};
-                }
-                completionStatus[week][day] = isCompleted;
-                saveCompletionStatus();
-                updateButtonStyles();
+                renderWorkout(currentWeek, currentDay);
             };
 
             const renderWorkout = (week, day) => {
                 currentWeek = week;
                 currentDay = day;
-                renderDaySelector(week);
 
                 const workoutData = programData.find(w => w.week === week && w.day === day);
                 const display = document.getElementById('workout-display');
@@ -340,26 +288,15 @@
                         <h3 class="text-2xl font-bold text-slate-800">Jour de Repos</h3>
                         <p class="mt-2 text-slate-600">Profitez-en pour récupérer, vous étirer et bien vous nourrir. La récupération est essentielle à la progression.</p>
                     </div>`;
-                    updateButtonStyles();
                     return;
                 }
                 
-                const isCompleted = completionStatus[week]?.[day] || false;
                 let phaseTitle = workoutData.phase === 'Test 1RM' ? 'Semaine de Test 1RM' : `Phase: ${workoutData.phase}`;
-                
                 let html = `
                     <div class="border border-slate-200 rounded-lg overflow-hidden">
                         <div class="p-4 bg-slate-50 border-b border-slate-200">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <h3 class="text-lg font-bold text-slate-800">Semaine ${week}, Jour ${day} - ${workoutData.mainMove}</h3>
-                                    <p class="text-sm text-amber-600 font-semibold">${phaseTitle}</p>
-                                </div>
-                                <div class="flex items-center">
-                                     <label for="day-checkbox" class="text-sm font-medium text-slate-600 mr-2">Séance terminée:</label>
-                                     <input type="checkbox" id="day-checkbox" class="h-5 w-5 rounded border-slate-300 text-green-600 focus:ring-green-500" ${isCompleted ? 'checked' : ''}>
-                                </div>
-                            </div>
+                            <h3 class="text-lg font-bold text-slate-800">Semaine ${week}, Jour ${day} - ${workoutData.mainMove}</h3>
+                             <p class="text-sm text-amber-600 font-semibold">${phaseTitle}</p>
                         </div>
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-slate-200">
@@ -368,42 +305,32 @@
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Type</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Exercice</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Séries x Répétitions</th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Charge / Instruction</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Charge</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-slate-200">`;
 
                 workoutData.content.forEach(item => {
-                    let weightCellContent;
-                    let tmSource = item.ex === 'Front Squat' ? 'Front Squat' : item.ex;
-
-                    if (Array.isArray(item.pct) && TMs[tmSource]) {
-                        const weights = item.pct.map(p => {
-                            const calculatedWeight = TMs[tmSource] * (p / 100);
-                            return roundToNearest(calculatedWeight, 1);
-                        });
-                        weightCellContent = `<span class="font-bold text-amber-700">${weights.join(' / ')} kg</span>`;
-                    } else if (item.pct && TMs[tmSource]) {
-                        const calculatedWeight = TMs[tmSource] * (item.pct / 100);
-                        weightCellContent = `<span class="font-bold text-amber-700">${roundToNearest(calculatedWeight, 1)} kg</span> <span class="text-xs text-slate-500">(@${item.pct}%)</span>`;
-                    } else if (item.instruction) {
-                        weightCellContent = `<span class="text-sm text-slate-600 italic">${item.instruction}</span>`;
-                    } else {
-                         weightCellContent = 'N/A';
+                    let weight = 'N/A';
+                    if (item.pct && TMs[item.ex]) {
+                        const calculatedWeight = TMs[item.ex] * (item.pct / 100);
+                        weight = `${roundToNearest(calculatedWeight, 1)} kg <span class="text-xs text-slate-500">(@${item.pct}%)</span>`;
+                    } else if (item.pct && item.ex === 'Front Squat' && TMs['Front Squat']) {
+                         const calculatedWeight = TMs['Front Squat'] * (item.pct / 100);
+                         weight = `${roundToNearest(calculatedWeight, 1)} kg <span class="text-xs text-slate-500">(@${item.pct}%)</span>`;
                     }
                     
                     html += `<tr>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-500">${item.type}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-slate-900">${item.ex}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">${item.sets}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm">${weightCellContent}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-amber-700">${weight}</td>
                             </tr>`;
                 });
 
                 html += `</tbody></table></div></div>`;
                 display.innerHTML = html;
-                document.getElementById('day-checkbox').addEventListener('change', (e) => handleDayCompletion(week, day, e.target.checked));
-                updateButtonStyles();
+                updateActiveButtons();
             };
             
             const setupNavigation = () => {
@@ -434,74 +361,44 @@
                 });
             };
             
-            const renderDaySelector = (week) => {
+            const setupSelectors = () => {
+                const weekSelector = document.getElementById('week-selector');
                 const daySelector = document.getElementById('day-selector');
-                daySelector.innerHTML = '';
-                for (let i = 1; i <= 5; i++) {
-                     const trainingDay = programData.find(s => s.week === week && s.day === i);
-                     if (!trainingDay || trainingDay.mainMove === 'Repos') continue;
+                
+                for (let i = 1; i <= 12; i++) {
+                    const weekBtn = document.createElement('button');
+                    weekBtn.textContent = `S.${i}`;
+                    weekBtn.dataset.week = i;
+                    weekBtn.className = 'week-btn p-2 w-12 text-center text-sm font-medium rounded-md border-2 border-transparent transition-colors duration-200';
+                    weekBtn.addEventListener('click', () => {
+                       const firstDayOfWeek = programData.find(s => s.week === i && s.mainMove !== 'Repos')?.day || 1;
+                       renderWorkout(i, firstDayOfWeek);
+                    });
+                    weekSelector.appendChild(weekBtn);
+                }
+
+                const daysInWeek = 5;
+                for (let i = 1; i <= daysInWeek; i++) {
+                     const trainingDay = programData.find(s => s.week === currentWeek && s.day === i);
+                     if (trainingDay && trainingDay.mainMove === 'Repos') continue;
 
                      const dayBtn = document.createElement('button');
+                     dayBtn.textContent = `Jour ${i}`;
                      dayBtn.dataset.day = i;
-                     dayBtn.className = 'day-btn px-4 py-2 text-sm font-semibold rounded-full transition-colors duration-200 border';
-                     dayBtn.innerHTML = `Jour ${i}`;
+                     dayBtn.className = 'day-btn px-4 py-2 text-sm font-semibold rounded-full transition-colors duration-200';
                      dayBtn.addEventListener('click', () => {
-                        renderWorkout(week, i);
+                        renderWorkout(currentWeek, i);
                      });
                      daySelector.appendChild(dayBtn);
                 }
             };
-
-            const setupWeekSelector = () => {
-                const weekSelector = document.getElementById('week-selector');
-                
-                for (let i = 1; i <= 12; i++) {
-                    const weekBtn = document.createElement('button');
-                    weekBtn.dataset.week = i;
-                    weekBtn.className = 'week-btn p-2 w-12 text-center text-sm font-medium rounded-md border-2 border-transparent transition-colors duration-200';
-                    weekBtn.innerHTML = `S.${i}`;
-                    weekBtn.addEventListener('click', () => {
-                       const newWeek = parseInt(weekBtn.dataset.week);
-                       const firstDayOfWeek = programData.find(s => s.week === newWeek && s.mainMove !== 'Repos')?.day || 1;
-                       renderWorkout(newWeek, firstDayOfWeek);
-                    });
-                    weekSelector.appendChild(weekBtn);
-                }
-            };
-
-            const updateButtonStyles = () => {
+            
+            const updateActiveButtons = () => {
                  document.querySelectorAll('.week-btn').forEach(btn => {
-                    const week = parseInt(btn.dataset.week);
-                    
-                    const trainingDaysInWeek = programData.filter(d => d.week === week && d.mainMove !== 'Repos');
-                    const allDaysCompleted = trainingDaysInWeek.length > 0 && trainingDaysInWeek.every(d => completionStatus[week]?.[d.day]);
-
-                    btn.classList.remove('btn-week-active', 'btn-week-completed');
-                    if (week === currentWeek) btn.classList.add('btn-week-active');
-                    if (allDaysCompleted) btn.classList.add('btn-week-completed');
-
-                    const baseText = `S.${week}`;
-                    if (allDaysCompleted && !btn.innerHTML.includes('check-icon')) {
-                        btn.innerHTML = baseText + checkSVG;
-                    } else if (!allDaysCompleted) {
-                        btn.innerHTML = baseText;
-                    }
+                    btn.classList.toggle('btn-week-active', parseInt(btn.dataset.week) === currentWeek);
                 });
-
                 document.querySelectorAll('.day-btn').forEach(btn => {
-                    const day = parseInt(btn.dataset.day);
-                    const isCompleted = completionStatus[currentWeek]?.[day] || false;
-                    
-                    btn.classList.remove('btn-day-active', 'btn-day-completed');
-                    if (day === currentDay) btn.classList.add('btn-day-active');
-                    if (isCompleted) btn.classList.add('btn-day-completed');
-
-                    const baseText = `Jour ${day}`;
-                    if(isCompleted && !btn.innerHTML.includes('check-icon')) {
-                        btn.innerHTML = baseText + checkSVG;
-                    } else if (!isCompleted) {
-                        btn.innerHTML = baseText;
-                    }
+                    btn.classList.toggle('btn-day-active', parseInt(btn.dataset.day) === currentDay);
                 });
             }
 
@@ -513,12 +410,7 @@
                     return labels.map((label, index) => {
                         const week = index + 1;
                         const session = programData.find(s => s.week === week && s.mainMove === liftName);
-                        if (!session) return null;
-                        const mainLiftContent = session.content[0];
-                        if (Array.isArray(mainLiftContent.pct)) {
-                            return mainLiftContent.pct[mainLiftContent.pct.length - 1];
-                        }
-                        return mainLiftContent.pct;
+                        return session ? session.content[0].pct : null;
                     });
                  }
 
@@ -541,19 +433,19 @@
                             tooltip: { mode: 'index', intersect: false, callbacks: { label: (context) => `${context.dataset.label}: ${context.parsed.y}%` } },
                         },
                         scales: {
-                            y: { beginAtZero: false, title: { display: true, text: '% du Training Max' } },
+                            y: { beginAtZero: true, title: { display: true, text: '% du Training Max' } },
                             x: { title: { display: true, text: 'Semaine' } }
                         }
                     }
                 });
             };
-            
-            // Initialisation
-            loadCompletionStatus();
+
             document.getElementById('tm-calculator').addEventListener('input', calculateTMs);
+            
             setupNavigation();
-            setupWeekSelector();
-            calculateTMs(); // This single call will handle the initial calculation and render.
+            setupSelectors();
+            calculateTMs();
+            renderWorkout(1, 1);
         });
     </script>
 </body>
